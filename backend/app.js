@@ -21,12 +21,6 @@ app.use(
   })
 );
 
-<<<<<<< HEAD
-
-app.use(express.json());
-
-=======
->>>>>>> c4d2b6d (Updated project with latest changes)
 // Define the base path for your routes
 app.use("/api/v1", userApi);
 app.use("/api/v1", categoryApi);
@@ -40,11 +34,6 @@ app.get("/", (req, res) => {
   res.send(
     `Backend deployed successfully! Frontend URL: ${process.env.FRONTEND_URL}`
   );
-<<<<<<< HEAD
-});
-// Export the app for Vercel to handle
-module.exports = app;
-=======
 });
 
 app.listen(process.env.PORT, () => {
@@ -52,4 +41,3 @@ app.listen(process.env.PORT, () => {
 });
 // Export the app for Vercel to handle
 export default app;
->>>>>>> c4d2b6d (Updated project with latest changes)
