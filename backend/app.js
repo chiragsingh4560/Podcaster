@@ -12,10 +12,7 @@ app.use(express.json());
 
 app.use(
   cors({
-   origin: [
-      "http://localhost:5174", // For local frontend
-     "https://podcaster-frontend-seven.vercel.app"  // For main frontend domains
-    ],
+   origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   })
@@ -27,7 +24,6 @@ app.use("/api/v1", categoryApi);
 app.use("/api/v1", podcastApi);
 
 // Serve static files from the "uploads" directory
-app.use("/uploads", express.static("uploads"));
 
 // A simple GET route to display a success message
 app.get("/", (req, res) => {
@@ -36,8 +32,8 @@ app.get("/", (req, res) => {
   );
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server Started on port ${process.env.PORT}`);
-});
+// app.listen(process.env.PORT, () => {
+//   console.log(`Server Started on port ${process.env.PORT}`);
+// });
 // Export the app for Vercel to handle
 export default app;
