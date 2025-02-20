@@ -8,14 +8,10 @@ import Podcast from "../models/podcast.js";
 const router = express.Router();
 
 // Add Podcast
-router.post("/add-podcast", authMiddleWare, upload, async (req, res) => {
+router.post("/add-podcast", authMiddleWare, async (req, res) => {
   try {
     // Destructure from req.body
-    const { title, description, category } = req.body;
-
-    // Cloudinary returns file URLs in `req.files`
-    const frontImage = req.files["frontImage"][0].path; // Cloudinary URL
-    const audioFile = req.files["audioFile"][0].path; // Cloudinary URL
+    const { title, description, category, frontImage, audioFile } = req.body; // Now receiving URLs directly
 
     if (!title || !description || !category || !frontImage || !audioFile) {
       return res.status(400).json({ message: "All fields are required" });
@@ -39,8 +35,8 @@ router.post("/add-podcast", authMiddleWare, upload, async (req, res) => {
       title,
       description,
       category: catId,
-      frontImage, // Cloudinary URL
-      audioFile, // Cloudinary URL
+      frontImage, // Already a Cloudinary URL from frontend
+      audioFile, // Already a Cloudinary URL from frontend
       user: userId,
     });
 
