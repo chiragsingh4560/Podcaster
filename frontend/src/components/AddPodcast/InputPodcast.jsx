@@ -16,7 +16,7 @@ const InputPodcast = () => {
     description: "",
     category: "",
   });
-  const [loading, setLoading] = useState(false); // ✅ Loading state
+  const [loading, setLoading] = useState(false); // Loading state
 
   const handleChangeImage = (e) => setFrontImage(e.target.files[0]);
 
@@ -38,32 +38,54 @@ const InputPodcast = () => {
       return;
     }
 
-    setLoading(true); // ✅ Set loading to true
-    toast.info("Uploading podcast..."); // ✅ Show upload start toast
+    setLoading(true);
+    toast.info("Uploading podcast...");
+  
+    const uploadToCloudinary = async (file, resourceType) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append(
+        "upload_preset",
+        import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+      );
 
-    const formData = new FormData();
-    formData.append("title", input.title);
-    formData.append("description", input.description);
-    formData.append("category", input.category);
-    formData.append("frontImage", frontImage);
-    formData.append("audioFile", audioFile);
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${
+          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+        }/upload`,
+        formData
+      );
+
+      return response.data.secure_url;
+    };
 
     try {
-      await axios.post(`${backendUrl}/api/v1/add-podcast`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
+      const frontImageUrl = await uploadToCloudinary(frontImage, "image");
+      const audioFileUrl = await uploadToCloudinary(audioFile, "video");
 
-      toast.success("Podcast Uploaded!"); // ✅ Show success toast after upload
+      await axios.post(
+        `${backendUrl}/api/v1/add-podcast`,
+        {
+          title: input.title,
+          description: input.description,
+          category: input.category,
+          frontImage: frontImageUrl,
+          audioFile: audioFileUrl,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
-      // Redirect after 1 second
+      toast.success("Podcast Uploaded!");
+
       setTimeout(() => {
         navigate("/all-podcasts");
-        setLoading(false); // ✅ Reset loading state
+        setLoading(false);
       }, 1000);
     } catch (error) {
       toast.error(error.response?.data?.message || "Upload failed.");
-      setLoading(false); // ✅ Reset loading state on error
+      setLoading(false);
     }
   };
 
@@ -72,12 +94,12 @@ const InputPodcast = () => {
       <ToastContainer position="top-center" draggable />
 
       {loading ? (
-        // ✅ Show loading message while uploading
+        // Show loading message while uploading
         <div className="flex justify-center items-center h-60 text-2xl font-semibold">
           Uploading podcast, please wait...
         </div>
       ) : (
-        // ✅ Show the form when not loading
+        // Show the form when not loading
         <div>
           <h1 className="text-2xl font-semibold">Create your podcast</h1>
           <div className="mt-5 flex flex-col lg:flex-row items-start justify-between gap-4">
