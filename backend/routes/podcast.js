@@ -10,6 +10,7 @@ const router = express.Router();
 // Add Podcast
 router.post("/add-podcast", authMiddleWare, async (req, res) => {
   try {
+       console.log("Received Data:", req.body); // Log received data
     // Destructure from req.body
     const { title, description, category, frontImage, audioFile } = req.body; // Now receiving URLs directly
 
